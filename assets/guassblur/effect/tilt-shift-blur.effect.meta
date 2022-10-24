@@ -1,1 +1,13 @@
-{"ver":"1.5.9","importer":"effect","imported":true,"uuid":"9f46517c-425b-4227-b2c4-0ed6ee060587","files":[".json"],"subMetas":{},"userData":{"combinations":[{}]}}
+{
+  "ver": "1.5.9",
+  "importer": "effect",
+  "imported": false,
+  "uuid": "9f46517c-425b-4227-b2c4-0ed6ee060587",
+  "files": [],
+  "subMetas": {},
+  "userData": {
+    "combinations": [
+      {}
+    ]
+  }
+}

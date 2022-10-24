@@ -139,3 +139,9 @@ if( dist < scanDistance && scanDistance - dist < scanRange ) {
 ## 引擎版本
 
 开发版本为：v3.6.0。
+
+## 效果图
+
+![](./snapshot/generator.gif)
+
+![](./snapshot/scan.gif)

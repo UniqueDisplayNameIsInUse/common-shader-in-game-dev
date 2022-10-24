@@ -9,3 +9,5 @@
 - guassblur 模糊效果
   
   ![](assets/guassblur/snapshot/overview.png)
+
+- scan 基于屏幕深度的贴花实现扫描和手雷的效果

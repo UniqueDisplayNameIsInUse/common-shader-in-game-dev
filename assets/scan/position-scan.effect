@@ -1,0 +1,123 @@
+// Copyright (c) 2017-2020 Xiamen Yaji Software Co., Ltd.
+CCEffect %{
+  techniques:
+  - passes:
+    - vert: sprite-vs:vert
+      frag: sprite-fs:frag
+      depthStencilState:
+        depthTest: false
+        depthWrite: false
+      blendState:
+        targets:
+        - blend: true
+          blendSrc: src_alpha
+          blendDst: one_minus_src_alpha
+          blendDstAlpha: one_minus_src_alpha
+      rasterizerState:
+        cullMode: none
+      properties:
+        alphaThreshold: { value: 0.5 }
+        depthMap:       { color: White }
+        scanDistance:   { value: 0.0, target: scanArgs.x, editor: { slide: true, range: [0,1.0], step: 0.001 }}
+        scaneRange:     { value: 0.0, target: scanArgs.y, editor: { slide: true, range: [0,1.0], step: 0.001 }}
+        scanColor:      { value: [1.0, 0.0, 0.0, 0.01], editor: { type: color } }        
+        worldPos:  { value: [0.0, 0.0, 0.0,], target: worldPosition.xyz, editor: { visible: false } }
+        matInvViewProj: { value: [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0,0.0, 0.0, 1.0 ], editor: { visible: false }}
+}%
+
+CCProgram sprite-vs %{
+  precision highp float;
+  #include <builtin/uniforms/cc-global>
+  #if USE_LOCAL
+    #include <builtin/uniforms/cc-local>
+  #endif
+  #if SAMPLE_FROM_RT
+    #include <common/common-define>
+  #endif
+  in vec3 a_position;
+  in vec2 a_texCoord;
+  in vec4 a_color;
+
+  out vec4 color;
+  out vec2 uv0;
+  out vec2 sv_position;
+
+  vec4 vert () {
+    vec4 pos = vec4(a_position, 1);
+
+    #if USE_LOCAL
+      pos = cc_matWorld * pos;
+    #endif
+
+    #if USE_PIXEL_ALIGNMENT
+      pos = cc_matView * pos;
+      pos.xyz = floor(pos.xyz);
+      pos = cc_matProj * pos;
+    #else
+      pos = cc_matViewProj * pos;
+      sv_position = vec2(pos.x, pos.y);      
+    #endif
+
+    uv0 = a_texCoord;
+    #if SAMPLE_FROM_RT
+      CC_HANDLE_RT_SAMPLE_FLIP(uv0);
+    #endif
+    color = a_color;
+
+    return pos;
+  }
+}%
+
+CCProgram sprite-fs %{
+  precision highp float;
+  #include <builtin/internal/embedded-alpha>
+  #include <builtin/internal/alpha-test>
+  #include <packing>
+
+  in vec4 color;
+
+  in vec2 uv0;
+  #pragma builtin(local)
+  layout(set = 2, binding = 11) uniform sampler2D cc_spriteTexture;
+
+  uniform Constants {
+    vec4 scanArgs;
+    vec4 scanColor;    
+    vec4 worldPosition;
+    mat4 matInvViewProj;
+  };
+
+  uniform sampler2D depthMap;
+  in vec2 sv_position;
+
+  vec4 frag () {
+    vec4 o = vec4(1, 1, 1, 1);
+    
+    float depth = 0.0;
+
+    o *= CCSampleWithAlphaSeparated(cc_spriteTexture, uv0);
+      #if IS_GRAY
+        float gray  = 0.2126 * o.r + 0.7152 * o.g + 0.0722 * o.b;
+        o.r = o.g = o.b = gray;
+      #endif
+      vec4 depthCol = texture(depthMap, uv0);
+      depth = unpackRGBAToDepth(depthCol);     
+
+    o *= color; 
+    ALPHA_TEST(o);        
+
+    vec4 screenPos = vec4(uv0.x * 2.0 - 1.0, uv0.y * 2.0 - 1.0, depth * 2.0 - 1.0, 1.0);
+    vec4 worldPos = matInvViewProj * screenPos;
+    worldPos = worldPos / worldPos.w;    
+
+    float dist = distance(worldPos.xyz, worldPosition.xyz);            
+
+    float scanDistance = scanArgs.x;
+    float scanRange = scanArgs.y; 
+    if( dist < scanDistance && scanDistance - dist < scanRange ) {
+      o = mix(o, scanColor, 1.0 - (scanDistance - dist)/ scanRange);
+    } 
+
+    return o;
+  }
+}%

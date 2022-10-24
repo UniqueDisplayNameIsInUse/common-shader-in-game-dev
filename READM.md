@@ -4,8 +4,8 @@
 
 - dissolve 消融效果
 
-  ![](dissolve/snapshot/dissolve.gif)
+  ![](assets/dissolve/snapshot/dissolve.gif)
 
 - guassblur 模糊效果
   
-  ![](guassblur/snapshot/overview.png)
+  ![](assets/guassblur/snapshot/overview.png)

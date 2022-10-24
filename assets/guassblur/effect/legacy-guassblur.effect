@@ -1,0 +1,137 @@
+// Copyright (c) 2017-2020 Xiamen Yaji Software Co., Ltd.
+CCEffect %{
+  techniques:
+  - passes:
+    - vert: legacy-guassblur-vs:vert
+      frag: legacy-guassblur-fs:frag
+      depthStencilState:
+        depthTest: false
+        depthWrite: false
+      blendState:
+        targets:
+        - blend: true
+          blendSrc: src_alpha
+          blendDst: one_minus_src_alpha
+          blendDstAlpha: one_minus_src_alpha
+      rasterizerState:
+        cullMode: none
+      properties:
+        alphaThreshold: { value: 0.5 }
+        blurOffsetX: { value: 0.01, target: blurOffset.x, editor: { slide: true, range: [0.0, 1.0], step: 0.001 } }
+        blurOffsetY: { value: 0.01, target: blurOffset.y, editor: { slide: true, range: [0.0, 1.0], step: 0.001 } }
+}%
+
+CCProgram legacy-guassblur-vs %{
+  precision highp float;
+  #include <builtin/uniforms/cc-global>
+  #if USE_LOCAL
+    #include <builtin/uniforms/cc-local>
+  #endif
+  #if SAMPLE_FROM_RT
+    #include <common/common-define>
+  #endif
+  in vec3 a_position;
+  in vec2 a_texCoord;
+  in vec4 a_color;
+
+  out vec4 color;
+  out vec2 uv0;
+  #if USE_TEXTURE
+    #if USE_LEGACY_BLUR
+      out vec4 uv01;
+      out vec4 uv23;
+      out vec4 uv45;
+    #endif  //USE_LEGACY_BLUR  
+  #endif //USE_TEXTURE
+
+  uniform BlurConst{
+    vec2 blurOffset;
+  };  
+
+  vec4 vert () {
+    vec4 pos = vec4(a_position, 1);
+
+    #if USE_LOCAL
+      pos = cc_matWorld * pos;
+    #endif
+
+    #if USE_PIXEL_ALIGNMENT
+      pos = cc_matView * pos;
+      pos.xyz = floor(pos.xyz);
+      pos = cc_matProj * pos;
+    #else
+      pos = cc_matViewProj * pos;
+    #endif
+
+    uv0 = a_texCoord;
+    #if SAMPLE_FROM_RT
+      CC_HANDLE_RT_SAMPLE_FLIP(uv0);
+    #endif
+    color = a_color;
+
+    #if USE_TEXTURE
+      #if USE_LEGACY_BLUR 
+        uv01 = uv0.xyxy + blurOffset.xyxy * vec4(1.0, 1.0, -1.0, -1.0);
+        uv23 = uv0.xyxy + blurOffset.xyxy * vec4(1.0, 1.0, -1.0, -1.0) * 2.0;
+        uv45 = uv0.xyxy + blurOffset.xyxy * vec4(1.0, 1.0, -1.0, -1.0) * 6.0;
+      #endif  //USE_LEGACY_BLUR
+    #endif //USE_TEXTURE
+
+    return pos;
+  }
+}%
+
+CCProgram legacy-guassblur-fs %{
+  precision highp float;
+  #include <builtin/internal/embedded-alpha>
+  #include <builtin/internal/alpha-test>
+
+  in vec4 color;
+  #if USE_TEXTURE
+    #if USE_LEGACY_BLUR
+      in vec4 uv01;
+      in vec4 uv23;
+      in vec4 uv45;
+    #endif //USE_LEGACY_BLUR
+  #endif //USE_TEXTURE
+
+  #if USE_TEXTURE
+    in vec2 uv0;
+    #pragma builtin(local)
+    layout(set = 2, binding = 11) uniform sampler2D cc_spriteTexture;
+  #endif
+
+  vec4 legacyFrameGuassBlur(sampler2D mainTexture, vec2 uv, vec4 uv01, vec4 uv23, vec4 uv45){
+      vec4 color = vec4(0.0, 0.0, 0.0, 0.0);
+
+      color += 0.4 * texture(mainTexture, uv);
+      color += 0.15 * texture(mainTexture, uv01.xy);
+      color += 0.15 * texture(mainTexture, uv01.zw);
+      color += 0.10 * texture(mainTexture, uv23.xy);
+      color += 0.10 * texture(mainTexture, uv23.zw);
+      color += 0.05 * texture(mainTexture, uv45.xy);
+      color += 0.05 * texture(mainTexture, uv45.zw);    
+      
+      return color;
+  }
+
+  vec4 frag () {
+    vec4 o = vec4(1, 1, 1, 1);
+
+    #if USE_TEXTURE
+      #if USE_LEGACY_BLUR
+        o *= legacyFrameGuassBlur(cc_spriteTexture, uv0, uv01, uv23, uv45);        
+      #else
+        o *= CCSampleWithAlphaSeparated(cc_spriteTexture, uv0);
+      #endif      
+      #if IS_GRAY
+        float gray  = 0.2126 * o.r + 0.7152 * o.g + 0.0722 * o.b;
+        o.r = o.g = o.b = gray;
+      #endif
+    #endif
+
+    o *= color;
+    ALPHA_TEST(o);
+    return o;
+  }
+}%

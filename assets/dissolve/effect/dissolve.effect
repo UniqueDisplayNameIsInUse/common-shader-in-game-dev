@@ -1,0 +1,62 @@
+// Effect Syntax Guide: https://docs.cocos.com/creator/manual/zh/shader/index.html
+
+CCEffect %{
+  techniques:  
+  - name: transparent
+    passes:
+    - vert: general-vs:vert # builtin header
+      frag: unlit-fs:frag
+      blendState:
+        targets:
+        - blend: true
+          blendSrc: src_alpha
+          blendDst: one_minus_src_alpha
+          blendSrcAlpha: src_alpha
+          blendDstAlpha: one_minus_src_alpha
+      properties: 
+        mainTexture:    { value: white }
+        mainColor:      { value: [1, 1, 1, 1], editor: { type: color } }
+        noiseTexture:   { value: white, editor: { parent: USE_DISSOLVE } }
+        color:          { value: [1.0, 0.0, 0.0], target: param.rgb, editor: {type: color, parent: USE_DISSOLVE } }        
+        dissovle:       { value: 0.1, target: param.a, editor: { slide: true, range: [0.0, 1.0], step: 0.001 , parent: USE_DISSOLVE } }
+        edge:           { value: 0.1, editor: { slide: true, range: [0.0, 1.0], step: 0.001 , parent: USE_DISSOLVE } }
+}%
+
+CCProgram unlit-fs %{
+  precision highp float;
+  #include <legacy/output>
+  #include <legacy/fog-fs>
+
+  in vec2 v_uv;
+  in vec3 v_position;
+
+  uniform sampler2D mainTexture;
+  uniform sampler2D noiseTexture;
+
+  uniform Constant {
+    vec4 mainColor;
+    vec4 param;
+    float edge;
+  };
+
+  vec4 frag () {
+    vec4 col = mainColor * texture(mainTexture, v_uv);
+
+    #if USE_DISSOLVE
+      float r = texture(noiseTexture, v_uv).r;  
+      float dissovle = param.a;  
+      if( r < dissovle){
+        discard;
+      }
+
+      vec3 edgeColor = param.rgb;
+      float maxEdge = dissovle + edge;
+      if( r < maxEdge ){
+          col.rgb += edgeColor * smoothstep(dissovle, maxEdge, r);
+      }
+    #endif //USE_DISSOLVE
+
+    CC_APPLY_FOG(col, v_position);
+    return CCFragOutput(col);
+  }
+}%

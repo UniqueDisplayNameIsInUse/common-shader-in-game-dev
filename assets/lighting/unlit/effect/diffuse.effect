@@ -1,0 +1,96 @@
+// Effect Syntax Guide: https://docs.cocos.com/creator/manual/zh/shader/index.html
+
+CCEffect %{
+  techniques:
+  - name: opaque
+    passes:
+    - vert: diffuse-vs:vert # builtin header
+      frag: diffuse-fs:frag
+      properties: &props
+        mainTexture:    { value: white }
+        mainColor:      { value: [1, 1, 1, 1], editor: { type: color } } 
+        kdiffuse:        { value: 10, editor: { slide: true, range:[0, 1.0], step: 0.01 } }
+}%
+
+CCProgram diffuse-vs %{
+  
+  precision highp float;
+  #include <legacy/input-standard>
+  #include <builtin/uniforms/cc-global>
+  #include <legacy/local-batch>
+  #include <legacy/input-standard>
+  #include <legacy/fog-vs>
+  #include <legacy/shadow-map-vs>
+
+  in vec4 a_color;
+  #if HAS_SECOND_UV
+    in vec2 a_texCoord1;
+  #endif
+
+  out vec3 v_position;
+  out vec3 v_normal;
+  out vec3 v_tangent;
+  out vec3 v_bitangent;
+  out vec2 v_uv;
+  out vec2 v_uv1;
+  out vec4 v_color;
+
+  vec4 vert () {
+    StandardVertInput In;
+    CCVertInput(In);
+
+    mat4 matWorld, matWorldIT;
+    CCGetWorldMatrixFull(matWorld, matWorldIT);
+
+    vec4 pos = matWorld * In.position;
+
+    v_position = pos.xyz;
+    v_normal = normalize((matWorldIT * vec4(In.normal, 0.0)).xyz);
+    v_tangent = normalize((matWorld * vec4(In.tangent.xyz, 0.0)).xyz);
+    v_bitangent = cross(v_normal, v_tangent) * In.tangent.w; // note the cross order
+
+    v_uv = a_texCoord;
+    #if HAS_SECOND_UV
+      v_uv1 = a_texCoord1;
+    #endif
+    v_color = a_color;
+
+    CC_TRANSFER_FOG(pos);
+    CC_TRANSFER_SHADOW(pos);
+
+    return cc_matProj * (cc_matView * matWorld) * In.position;
+  }
+
+}%
+
+CCProgram diffuse-fs %{
+  precision highp float;
+  #include <legacy/output>
+  #include <legacy/fog-fs>
+  #include <builtin/uniforms/cc-global>
+
+  in vec2 v_uv;
+  in vec3 v_position;
+  in vec3 v_normal;
+
+  uniform sampler2D mainTexture;
+
+  uniform Constant {
+    vec4 mainColor;
+    float kdiffuse;
+  };
+
+  vec4 frag () {
+
+    // N = normal
+    vec3 N = normalize(v_normal);
+    // LD = light direction    
+    vec3 LD = normalize(-cc_mainLitDir.xyz);    
+    vec4 col = mainColor * texture(mainTexture, v_uv);
+    // diffuse = LitColor * kD * cos(N, LD)    
+    col.rgb *= dot(N, LD) * kdiffuse * cc_mainLitColor.xyz;// w = 强度 * cc_mainLitColor.w;
+
+    CC_APPLY_FOG(col, v_position);
+    return CCFragOutput(col);
+  }
+}%

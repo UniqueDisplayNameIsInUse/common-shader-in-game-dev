@@ -1,0 +1,42 @@
+{
+  "ver": "1.0.24",
+  "importer": "image",
+  "imported": true,
+  "uuid": "e6697b33-64bd-4cc1-9bf8-e35677b2474c",
+  "files": [
+    ".jpg",
+    ".json"
+  ],
+  "subMetas": {
+    "6c48a": {
+      "importer": "texture",
+      "uuid": "e6697b33-64bd-4cc1-9bf8-e35677b2474c@6c48a",
+      "displayName": "3.6公众号",
+      "id": "6c48a",
+      "name": "texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "none",
+        "anisotropy": 0,
+        "isUuid": true,
+        "imageUuidOrDatabaseUri": "e6697b33-64bd-4cc1-9bf8-e35677b2474c",
+        "visible": true
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "type": "texture",
+    "fixAlphaTransparencyArtifacts": true,
+    "hasAlpha": false,
+    "redirect": "e6697b33-64bd-4cc1-9bf8-e35677b2474c@6c48a"
+  }
+}

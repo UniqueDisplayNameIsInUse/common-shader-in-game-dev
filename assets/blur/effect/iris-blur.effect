@@ -22,7 +22,7 @@ CCEffect %{
 
         rotate:         { value: [1.0, 0.0, 0.0, 1.0]}
         radius:         { value: 0.01, target: irisParam.z, editor: { slide: true, range: [0.0, 1.0], step: 0.01 } }
-        pixelSize:      { value: 0.01, target: irisParam.w, editor: { slide: true, range: [0.0, 1.0], step: 0.01 } }
+        pixelSize:      { value: 0.01, target: irisParam.w, editor: { slide: true, range: [0.0, 5.0], step: 0.01 } }
     - switch: PREVIEW_MASK
       vert: sprite-vs:vert
       frag: iris-blur-preview-mask-fs:frag
@@ -98,7 +98,7 @@ CCProgram iris-blur %{
     return dot(center, center)* area;
   }
 
-  const int iterateCount = 15;
+  const int iterateCount = 25;
   vec4 irisBlur(sampler2D mainTexture, IrisBlurInput ii){
       mat2 rotMat = mat2(ii.rotate);   
       vec4 color = vec4(0.0, 0.0, 0.0, 0.0);

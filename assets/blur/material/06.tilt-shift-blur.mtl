@@ -27,10 +27,11 @@
   ],
   "_props": [
     {
-      "area": 1,
-      "spread": 0.9,
-      "radius": 0.11,
-      "pixelSize": 0.08
+      "area": 0.15,
+      "spread": 0.66,
+      "offset": 0,
+      "radius": 0.37,
+      "pixelSize": 0.12
     }
   ]
 }

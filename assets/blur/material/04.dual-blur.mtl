@@ -40,6 +40,10 @@
   ],
   "_props": [
     {},
-    {}
+    {
+      "texelSizeX": 0.05,
+      "texelSizeY": 0.05,
+      "offset": 0.38
+    }
   ]
 }

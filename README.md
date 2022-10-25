@@ -8,6 +8,10 @@
 
 - guassblur 模糊效果
   
-  ![](assets/guassblur/snapshot/overview.png)
+  ![](assets/blur/snapshot/overview.png)
 
 - scan 基于屏幕深度的贴花实现扫描和手雷的效果
+
+  ![](assets/scan/snapshot/generator.gif)
+   
+  ![](assets/scan/snapshot/scan.gif)

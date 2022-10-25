@@ -15,3 +15,7 @@
   ![](assets/scan/snapshot/generator.gif)
    
   ![](assets/scan/snapshot/scan.gif)
+
+- z-write-occlusion 基于深度测试的角色被遮挡时的效果
+
+  ![](assets/z-write-occlusion/snapshot/01.gif)

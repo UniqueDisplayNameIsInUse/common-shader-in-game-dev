@@ -26,6 +26,9 @@
     }
   ],
   "_props": [
-    {}
+    {
+      "directionX": 0.004,
+      "directionY": 0
+    }
   ]
 }

@@ -1,0 +1,52 @@
+// Effect Syntax Guide: https://docs.cocos.com/creator/manual/zh/shader/index.html
+
+CCEffect %{
+  techniques:
+  - name: opaque
+    passes:
+    - vert: legacy/main-functions/general-vs:vert # builtin header
+      frag: ggx-ndf-fs:frag
+      properties: &props
+        mainTexture:    { value: white }
+        mainColor:      { value: [1, 1, 1, 1], editor: { type: color } }
+        roughness:      { value: 0.1, editor: { slide: true, range: [0, 1], step: 0.001 } }  
+}%
+
+CCProgram ggx-ndf-fs %{
+  precision highp float;
+  #include <legacy/output>
+  #include <legacy/fog-fs>
+  #include <builtin/uniforms/cc-global>
+  #include <ggx-pbr>
+
+  in vec2 v_uv;
+  in vec3 v_position;
+  in vec3 v_normal;
+
+  uniform sampler2D mainTexture;
+
+  // NDF Term 全称是 Normal Distribution Function 法线分布函数
+  // 这个函数的作用是描述物体表面的法线
+  // - 一般我们采用顶点法线 这种是粗略的描述法线的方法，没有描述到更细致的法线
+  // - 法线贴图在上一步的基础上更加细化的描述法线，但实际上也是高于像素级别的，没有办法模拟物体表面凹凸不平的亚像素级别的法线信息，
+  // - NDF 的作用就是通过数学方法，在亚像素级别去描述法线的定义
+  // PBR 引入粗糙度概念，将法线进一步处理，使得其可以用于定义亚像素表面上的法线信息（微表面）
+  // 随着粗糙度的提升，表面的法线会更加杂乱无序化，而粗糙度为0的情况下，指的就是物体表面非常平滑。
+  // GGX 的 NDF 会有比较好的拖尾效果，因此常用
+
+  uniform Constant {
+    vec4 mainColor;
+    float roughness;
+  };
+
+  vec4 frag () {
+    vec3 N = normalize(v_normal);
+    vec3 L = normalize(-cc_mainLitDir.xyz);
+    vec3 V = normalize(cc_cameraPos.xyz - v_position);
+    vec3 H = normalize(L+V);
+    float NDL = max(dot(L, N), 0.0);
+    float NDH = max(dot(N, H), 0.0);
+    float NDF = D_GGX(NDH, roughness);
+    return vec4(NDF, NDF, NDF, 1.0);
+  }
+}%

@@ -1,0 +1,72 @@
+// you can write GLSL code directly in here
+
+const float PI = 3.1415926;
+
+float pow5(float a){
+    return a*a*a*a*a;
+}
+
+//GGX pbr normal distribution functions 
+float D_GGX(float NDL, float roughness) {
+  float a = roughness * roughness;
+  float a2 = a*a;
+  float d = NDL*NDL*(a2 - 1.0);
+  float s = (d + 1.0)*(d + 1.0)*PI;    
+  return a2/s;
+}  
+
+float g1(float k, float NDV){
+    return NDV / ((NDV * (1.0 - k)) + k);    
+}
+
+// ggx gemomerty function (Schlick-GGX)
+float G_GGX_Smith_Direct(float roughness, float NDL, float NDV){
+  float a = (roughness * roughness + 1.0) / 2.0;
+  float a2 = a * a;
+  float k = a2 / 8.0;
+  return g1(k, NDL)*g1(k, NDV);
+} 
+
+struct Surface{
+  vec3 albedo;
+
+  float alpha;
+  float roughness;
+  float metallic;
+
+  vec3 diffuse;
+  vec3 normal;
+  vec3 position;
+
+  vec4 emissive;
+};
+
+vec4 ggxSurf(Surface s){
+
+    vec3 N = normalize(s.normal);
+    vec3 L = normalize(-cc_mainLitDir.xyz);    
+    vec3 V = normalize(cc_cameraPos.xyz - s.position);    
+    vec3 H = normalize(L + V);
+
+    float NDL = max(dot(N, L), 0.0);
+    float NDV = max(dot(N, V), 0.0);      
+    float HDL = max(dot(H, L), 0.0);       
+    float NDH = max(dot(N, H), 0.0);       
+
+    float FD90 = 0.5 + 2.0 * s.roughness * HDL*HDL;    
+    float FD90M1 = (FD90 - 1.0);
+    vec3 diffuse = s.albedo * (1.0 + FD90M1 * pow5(NDL)*(1.0 + FD90M1 * pow5((1.0 - NDV))));        
+    
+    vec3 F0 = mix(vec3(0.04), s.albedo, s.metallic);   
+    vec3 F = F0 + (1.0 - F0) * pow5(1.0 - NDV);                    
+
+    float NDF = D_GGX(NDH, s.roughness);        
+
+    float G = G_GGX_Smith_Direct(s.roughness, NDV, NDL);             
+    float base = 4.0 * NDL * NDV;    
+    vec3 BRDF = NDF * (F * G) / base;        
+
+    vec4 directionnalLight = vec4(diffuse/PI + BRDF, 1.0);     
+    directionnalLight.rgb *= cc_mainLitColor.rgb * NDL;
+    return directionnalLight;
+}

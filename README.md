@@ -19,3 +19,11 @@
 - z-write-occlusion 基于深度测试的角色被遮挡时的效果
 
   ![](assets/z-write-occlusion/snapshot/01.gif)
+
+- lighting 光照模型
+  - legacy 基础光照模型
+  
+  ![](./assets/lighting/classic-light-model/snapshot/basic-light.png)
+  - ggx pbr 基础物理渲染学习
+
+  ![](./assets/lighting/physics-based-light-model/ggx-torrance-brdf/snapshot/directional-lit.png)

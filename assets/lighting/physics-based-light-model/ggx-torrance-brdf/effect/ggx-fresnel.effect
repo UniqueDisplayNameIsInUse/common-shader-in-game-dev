@@ -1,0 +1,61 @@
+// Effect Syntax Guide: https://docs.cocos.com/creator/manual/zh/shader/index.html
+
+CCEffect %{
+  techniques:
+  - name: opaque
+    passes:
+    - vert: legacy/main-functions/general-vs:vert # builtin header
+      frag: unlit-fs:frag
+      properties: &props
+        mainTexture:    { value: white }
+        mainColor:      { value: [1, 1, 1, 1], editor: { type: color } }        
+        metallic:       { value: 0.1, editor: { slide: true, range: [0, 1], step: 0.001 } }          
+}%
+
+CCProgram unlit-fs %{
+  precision highp float;
+  #include <legacy/output>
+  #include <legacy/fog-fs>
+  #include <builtin/uniforms/cc-global>
+  #include <ggx-pbr>
+
+  in vec2 v_uv;
+  in vec3 v_position;
+  in vec3 v_normal;
+
+  uniform sampler2D mainTexture;
+
+  uniform Constant {
+    vec4 mainColor;    
+    float metallic;
+  };  
+  
+  // Fresnel Term 
+  // 菲涅尔描述的是光线和视角的夹角的一种变化，常见如观察物体边缘时，物体的法线和视角的夹角越大，则此处看起来就会越亮，这一点在观察被光照的水面会非常明显。
+  // 这个性质可以用于制作边缘光，官方文档的示例就是用这个方法做的： 
+  // https://docs.cocos.com/creator/manual/zh/shader/write-effect-3d-rim-light.html
+  // 在 PBR 的渲染方程里面，菲尼尔项是使用 fresnel-Schlick 近似方法：
+  // F0 在 PBR 流程里面使用金属度对 vec3(0.04)（这里的0.04是使用一个很小的值，来描述金属度低的物体，菲尼尔现象越弱）和物体的固有色进行插值得到的   
+  // F0指的是掠射角为0时的菲尼尔值，同理 F90 指的是掠射角为90时的菲尼尔值(F90会在计算diffuse时用到)
+  // 0.04 应该是在 sRGB 空间内的，所以的 PBR 计算颜色都是在 sRGB 空间？ （这条是我猜的）
+  // 得到这个结果后，在使用 fresnel-Schlick 进行拟合 F = F0 + (1 - F0)* pow(1.0 - n*v, 5);
+  // 其中 n 为法线， v 为视角即相机的位置减去世界坐标系内顶点的位置   
+  // 至于为什么是 pow( , 5) 5 次方，我个人理解可能是这个曲线的拟合效果近似，且效率最好，注意不要使用内置的 pow 函数，自己封装下最好。
+  
+
+  vec4 frag () {
+    vec3 N = normalize(v_normal);
+    vec3 L = normalize(cc_mainLitDir.xyz);   
+    
+    vec3 V = normalize(cc_cameraPos.xyz - v_position);
+    vec3 H = normalize(L + V);
+    float NDV = dot(V, N);    
+
+    vec4 col = mainColor * texture(mainTexture, v_uv);      
+    vec3 albedo = col.rgb;
+    vec3 F0 = mix(vec3(0.04), albedo, metallic);   
+
+    col.rgb = F0 + (1.0 - F0) * pow5(1.0 - NDV);
+    return col;    
+  }
+}%

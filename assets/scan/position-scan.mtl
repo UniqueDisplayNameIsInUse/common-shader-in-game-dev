@@ -30,12 +30,13 @@
         "__uuid__": "ba06ac93-e476-47e6-b9ff-a242c5bfe95e",
         "__expectedType__": "cc.RenderTexture"
       },
-      "scaneRange": 0.863,
+      "scanDistance": 0.845,
+      "scaneRange": 0.204,
       "scanColor": {
         "__type__": "cc.Color",
-        "r": 7,
-        "g": 252,
-        "b": 7,
+        "r": 235,
+        "g": 64,
+        "b": 119,
         "a": 255
       }
     }

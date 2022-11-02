@@ -1,4 +1,6 @@
 // you can write GLSL code directly in here
+#include <builtin/uniforms/cc-environment>
+#include <common/data/unpack>
 
 const float PI = 3.1415926;
 
@@ -41,7 +43,7 @@ struct Surface{
   vec4 emissive;
 };
 
-vec4 ggxSurf(Surface s){
+vec4 ggxSurf(Surface s, samplerCube diffuseMap, samplerCube prefilteredMap){
 
     vec3 N = normalize(s.normal);
     vec3 L = normalize(-cc_mainLitDir.xyz);    
@@ -67,6 +69,43 @@ vec4 ggxSurf(Surface s){
     vec3 BRDF = NDF * (F * G) / base;        
 
     vec4 directionnalLight = vec4(diffuse/PI + BRDF, 1.0);     
-    directionnalLight.rgb *= cc_mainLitColor.rgb * NDL;
+    directionnalLight.rgb *= cc_mainLitColor.rgb * NDL;       
+
+    #if USE_IRRADIANCE_MAP
+      vec3 aimbientDiffuse = vec3(0.0);
+      vec4 indirectDiffuse = texture(diffuseMap, N); // HDR 格式存放的数据一般是 RGBE
+      #if IS_RGBE_DIFFUSE
+        aimbientDiffuse = unpackRGBE(indirectDiffuse);
+      #else 
+        aimbientDiffuse = SRGBToLinear(indirectDiffuse.rgb);
+      #endif      
+      // kd :
+      vec3 Fr = F0 + (max(vec3(1.0 - s.roughness), F0)) * pow5(1.0 - NDL);
+      aimbientDiffuse.rgb *= NDL / PI * Fr;
+
+      //return vec4(aimbientDiffuse, 1.0);
+
+      vec3 indirectSpecular = vec3(0.0);  
+
+      // irradiance specular = Lc(R)(F0 * Scale + Bias)
+      
+      vec3 R = reflect(L, N);
+      vec3 prefilteredColor = vec3(0.0);
+      vec2 scaleBias = vec2(1.0, 0.0);
+      #if USE_PRE_FILTERED_SPECULAR_MA
+        prefilteredColor = texture(prefilteredMap, R, s.roughness).rgb;
+      #endif    
+
+      #if USE_LUT
+
+      #endif
+
+      prefilteredColor *= F0 * scaleBias.x + scaleBias.y;
+      prefilteredColor *= NDL;
+      //return vec4(prefilteredColor.rgb, 1.0);
+
+      directionnalLight.rgb += aimbientDiffuse + indirectSpecular;
+    #endif
+
     return directionnalLight;
 }

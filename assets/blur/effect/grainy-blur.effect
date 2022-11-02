@@ -66,6 +66,7 @@ CCProgram grainy-blur %{
     float blurRadius;
   };
 
+  // 随机噪声
   float rand(vec2 uv){
     return sin(dot(uv, vec2(1233.224, 1743.335)));
   }
@@ -78,11 +79,13 @@ CCProgram grainy-blur %{
 
     for (int k = 0; k < int(iterateCount); k ++)
     {
+      
       random = fract(43758.5453 * random + 0.61432);
       randomOffset.x = (random - 0.5) * 2.0;
       random = fract(43758.5453 * random + 0.61432);
       randomOffset.y = (random - 0.5) * 2.0;
-      
+
+      // 从 uv 位置随机选择纹理进行混合
       finalColor += texture(mainTexture, vec2(uv + randomOffset * blurRadius));
     }
     return finalColor / iterateCount;

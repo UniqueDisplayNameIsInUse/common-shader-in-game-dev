@@ -9,6 +9,8 @@ CCEffect %{
       properties: &props
         mainTexture:    { value: white }
         mainColor:      { value: [1, 1, 1, 1], editor: { type: color } }
+        diffuseMap:     { value: white }
+        prefilteredMap: { value: white }
         emissive:       { value: [1, 1, 1, 1], editor: { type: color } }
         roughness:      { value: 0.1, editor: { slide: true, range: [0, 1], step: 0.001 } }  
         metallic:       { value: 0.1, editor: { slide: true, range: [0, 1], step: 0.001 } }  
@@ -18,14 +20,16 @@ CCProgram ggx-ndf-fs %{
   precision highp float;
   #include <legacy/output>
   #include <legacy/fog-fs>
-  #include <builtin/uniforms/cc-global>
-  #include <ggx-pbr>
+  #include <builtin/uniforms/cc-global>  
+  #include <ggx-pbr>  
 
   in vec2 v_uv;
   in vec3 v_position;
   in vec3 v_normal;
 
-  uniform sampler2D mainTexture;
+  uniform sampler2D mainTexture; 
+  uniform samplerCube diffuseMap;
+  uniform samplerCube prefilteredMap;
 
   uniform Constant {
     vec4 mainColor;
@@ -35,6 +39,7 @@ CCProgram ggx-ndf-fs %{
   };
 
   vec4 frag () {
+
       vec4 col = mainColor * texture(mainTexture, v_uv);       
 
       Surface s;
@@ -44,8 +49,8 @@ CCProgram ggx-ndf-fs %{
       s.metallic = metallic;
       s.normal = normalize(v_normal);      
       s.position = v_position;
-      s.emissive = emissive;
+      s.emissive = emissive;      
       
-      return ggxSurf(s);
+      return ggxSurf(s, diffuseMap, prefilteredMap);
   }
 }%

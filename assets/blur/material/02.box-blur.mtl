@@ -26,6 +26,9 @@
     }
   ],
   "_props": [
-    {}
+    {
+      "blurOffsetX": 0.02,
+      "blurOffsetY": 0.02
+    }
   ]
 }

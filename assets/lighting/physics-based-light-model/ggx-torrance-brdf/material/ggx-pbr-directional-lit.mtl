@@ -9,7 +9,10 @@
   },
   "_techIdx": 0,
   "_defines": [
-    {}
+    {
+      "USE_IRRADIANCE_MAP": true,
+      "IS_RGBE_DIFFUSE": true
+    }
   ],
   "_states": [
     {
@@ -31,8 +34,16 @@
         "b": 245,
         "a": 255
       },
-      "roughness": 0.813,
-      "metallic": 0.359
+      "diffuseMap": {
+        "__uuid__": "b44bd41c-c32b-4163-a18e-e1addd879200@b47c0",
+        "__expectedType__": "cc.TextureCube"
+      },
+      "prefilteredMap": {
+        "__uuid__": "d032ac98-05e1-4090-88bb-eb640dcb5fc1@b47c0",
+        "__expectedType__": "cc.TextureCube"
+      },
+      "roughness": 0,
+      "metallic": 1
     }
   ]
 }

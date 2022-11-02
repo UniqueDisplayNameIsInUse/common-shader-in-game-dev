@@ -9,7 +9,9 @@
   },
   "_techIdx": 0,
   "_defines": [
-    {},
+    {
+      "USE_REFLECTION_DENOISE": true
+    },
     {},
     {}
   ],
@@ -44,8 +46,8 @@
   ],
   "_props": [
     {
-      "occlusion": 0,
-      "specularIntensity": 0
+      "occlusion": 0.284,
+      "specularIntensity": 0.327
     },
     {},
     {}

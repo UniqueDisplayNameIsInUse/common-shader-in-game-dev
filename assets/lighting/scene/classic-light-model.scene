@@ -10,7 +10,7 @@
   },
   {
     "__type__": "cc.Scene",
-    "_name": "base-light",
+    "_name": "classic-light-model",
     "_objFlags": 0,
     "_parent": null,
     "_children": [
@@ -323,7 +323,7 @@
         "__id__": 13
       }
     ],
-    "_active": true,
+    "_active": false,
     "_components": [
       {
         "__id__": 16
@@ -907,32 +907,32 @@
     "__type__": "cc.AmbientInfo",
     "_skyColorHDR": {
       "__type__": "cc.Vec4",
-      "x": 0.242613,
-      "y": 0.362617,
-      "z": 0.798746,
+      "x": 0.519963,
+      "y": 0.630785,
+      "z": 0.905039,
       "w": 0.520833125
     },
     "_skyColor": {
       "__type__": "cc.Vec4",
-      "x": 0.242613,
-      "y": 0.362617,
-      "z": 0.798746,
+      "x": 0.519963,
+      "y": 0.630785,
+      "z": 0.905039,
       "w": 0.520833125
     },
     "_skyIllumHDR": 20000,
     "_skyIllum": 20000,
     "_groundAlbedoHDR": {
       "__type__": "cc.Vec4",
-      "x": 0.241814,
-      "y": 0.361945,
-      "z": 0.798799,
+      "x": 0.519558,
+      "y": 0.630494,
+      "z": 0.90507,
       "w": 0
     },
     "_groundAlbedo": {
       "__type__": "cc.Vec4",
-      "x": 0.241814,
-      "y": 0.361945,
-      "z": 0.798799,
+      "x": 0.519558,
+      "y": 0.630494,
+      "z": 0.90507,
       "w": 0
     },
     "_skyColorLDR": {
@@ -980,11 +980,11 @@
     "__type__": "cc.SkyboxInfo",
     "_envLightingType": 0,
     "_envmapHDR": {
-      "__uuid__": "d032ac98-05e1-4090-88bb-eb640dcb5fc1@b47c0",
+      "__uuid__": "b44bd41c-c32b-4163-a18e-e1addd879200@b47c0",
       "__expectedType__": "cc.TextureCube"
     },
     "_envmap": {
-      "__uuid__": "d032ac98-05e1-4090-88bb-eb640dcb5fc1@b47c0",
+      "__uuid__": "b44bd41c-c32b-4163-a18e-e1addd879200@b47c0",
       "__expectedType__": "cc.TextureCube"
     },
     "_envmapLDR": {

@@ -1,5 +1,5 @@
 {
-  "ver": "1.0.24",
+  "ver": "1.0.25",
   "importer": "image",
   "imported": true,
   "uuid": "f951aa6d-1525-429e-83ad-0bc983b35390",
@@ -22,7 +22,7 @@
         "mipfilter": "linear",
         "anisotropy": 0,
         "isRGBE": false,
-        "imageDatabaseUri": "db://assets/lighting/texture/ibl_irradiance.png"
+        "imageDatabaseUri": "f951aa6d-1525-429e-83ad-0bc983b35390"
       },
       "ver": "1.0.10",
       "imported": true,

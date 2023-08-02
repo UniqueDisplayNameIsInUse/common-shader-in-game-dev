@@ -43,7 +43,7 @@ CCProgram ggx-ndf-fs %{
     vec3 N = normalize(v_normal);
     vec3 L = normalize(-cc_mainLitDir.xyz);
     vec3 V = normalize(cc_cameraPos.xyz - v_position);
-    vec3 H = normalize(L+V);
+    vec3 H = normalize(L + V);
     float NDL = max(dot(L, N), 0.0);
     float NDH = max(dot(N, H), 0.0);
     float NDF = D_GGX(NDH, roughness);

@@ -46,8 +46,10 @@
   ],
   "_props": [
     {
-      "occlusion": 0.284,
-      "specularIntensity": 0.327
+      "occlusion": 0.716,
+      "specularIntensity": 0.327,
+      "roughness": 0.8,
+      "metallic": 0.6
     },
     {},
     {}

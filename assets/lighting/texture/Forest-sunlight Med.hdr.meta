@@ -1,5 +1,5 @@
 {
-  "ver": "1.0.24",
+  "ver": "1.0.25",
   "importer": "image",
   "imported": true,
   "uuid": "b44bd41c-c32b-4163-a18e-e1addd879200",
@@ -22,7 +22,7 @@
         "mipfilter": "linear",
         "anisotropy": 0,
         "isRGBE": true,
-        "imageDatabaseUri": "db://assets/lighting/texture/Forest-sunlight Med.hdr"
+        "imageDatabaseUri": "b44bd41c-c32b-4163-a18e-e1addd879200"
       },
       "ver": "1.0.10",
       "imported": true,

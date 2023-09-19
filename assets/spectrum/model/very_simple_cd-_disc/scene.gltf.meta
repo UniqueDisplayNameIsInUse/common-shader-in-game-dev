@@ -1,0 +1,131 @@
+{
+  "ver": "2.3.4",
+  "importer": "gltf",
+  "imported": true,
+  "uuid": "b054ce43-62c6-4150-934b-d64bd1a7e9c6",
+  "files": [],
+  "subMetas": {
+    "99248": {
+      "importer": "gltf-material",
+      "uuid": "b054ce43-62c6-4150-934b-d64bd1a7e9c6@99248",
+      "displayName": "",
+      "id": "99248",
+      "name": "None.material",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "4f4f4": {
+      "importer": "gltf-mesh",
+      "uuid": "b054ce43-62c6-4150-934b-d64bd1a7e9c6@4f4f4",
+      "displayName": "",
+      "id": "4f4f4",
+      "name": "Object_0.mesh",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.1.0",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "3effa": {
+      "importer": "texture",
+      "uuid": "b054ce43-62c6-4150-934b-d64bd1a7e9c6@3effa",
+      "displayName": "",
+      "id": "3effa",
+      "name": "UnnamedTexture-0.texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "linear",
+        "anisotropy": 0,
+        "isUuid": false,
+        "imageUuidOrDatabaseUri": "db://assets/spectrum/model/very_simple_cd-_disc/textures/None_baseColor.png"
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "221a5": {
+      "importer": "texture",
+      "uuid": "b054ce43-62c6-4150-934b-d64bd1a7e9c6@221a5",
+      "displayName": "",
+      "id": "221a5",
+      "name": "UnnamedTexture-1.texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "linear",
+        "anisotropy": 0,
+        "isUuid": false,
+        "imageUuidOrDatabaseUri": "db://assets/spectrum/model/very_simple_cd-_disc/textures/None_metallicRoughness.png"
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "d1932": {
+      "importer": "gltf-scene",
+      "uuid": "b054ce43-62c6-4150-934b-d64bd1a7e9c6@d1932",
+      "displayName": "",
+      "id": "d1932",
+      "name": "scene.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.12",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [
+      {
+        "uri": "db://assets/spectrum/model/very_simple_cd-_disc/textures/None_baseColor.png"
+      },
+      {
+        "uri": "db://assets/spectrum/model/very_simple_cd-_disc/textures/None_metallicRoughness.png"
+      }
+    ],
+    "redirect": "b054ce43-62c6-4150-934b-d64bd1a7e9c6@d1932",
+    "assetFinder": {
+      "meshes": [
+        "b054ce43-62c6-4150-934b-d64bd1a7e9c6@4f4f4"
+      ],
+      "skeletons": [],
+      "textures": [
+        "b054ce43-62c6-4150-934b-d64bd1a7e9c6@3effa",
+        "b054ce43-62c6-4150-934b-d64bd1a7e9c6@221a5"
+      ],
+      "materials": [
+        "b054ce43-62c6-4150-934b-d64bd1a7e9c6@99248"
+      ],
+      "scenes": [
+        "b054ce43-62c6-4150-934b-d64bd1a7e9c6@d1932"
+      ]
+    }
+  }
+}

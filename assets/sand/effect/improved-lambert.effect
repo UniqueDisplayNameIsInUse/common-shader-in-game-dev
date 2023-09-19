@@ -1,0 +1,58 @@
+// Effect Syntax Guide: https://docs.cocos.com/creator/manual/zh/shader/index.html
+
+CCEffect %{
+  techniques:
+  - name: opaque
+    passes:
+    - vert: legacy/main-functions/general-vs:vert # builtin header
+      frag: unlit-fs:frag
+      properties: &props
+        mainTexture:    { value: white }
+        mainColor:      { value: [1, 1, 1, 1], editor: { type: color } }
+  - name: transparent
+    passes:
+    - vert: general-vs:vert # builtin header
+      frag: unlit-fs:frag
+      blendState:
+        targets:
+        - blend: true
+          blendSrc: src_alpha
+          blendDst: one_minus_src_alpha
+          blendSrcAlpha: src_alpha
+          blendDstAlpha: one_minus_src_alpha
+      properties: *props
+}%
+
+CCProgram unlit-fs %{
+  precision highp float;
+  #include <legacy/output>
+  #include <legacy/fog-fs>
+
+  in vec2 v_uv;
+  in vec3 v_position;
+  in vec3 v_normal;
+
+  uniform sampler2D mainTexture;
+
+  uniform Constant {
+    vec4 mainColor;
+  };
+
+  /**
+  https://youtu.be/wt2yYnBRD3U
+  
+  */
+  vec4 frag () {
+
+    vec3 N = normalize(v_normal);
+    N.y *= 0.3;
+    vec3 L = -cc_mainLitDir.xyz;
+    float I = max(4.0 * dot(N, L), 0.0);
+
+    vec4 col = mainColor * texture(mainTexture, v_uv);
+    col.rgb *= cc_mainLitColor.rgb * I;
+    
+    CC_APPLY_FOG(col, v_position);
+    return CCFragOutput(col);
+  }
+}%

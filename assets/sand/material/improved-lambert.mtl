@@ -4,15 +4,12 @@
   "_objFlags": 0,
   "_native": "",
   "_effectAsset": {
-    "__uuid__": "06615014-dd9f-49bd-af43-37744d3f6bdc",
+    "__uuid__": "dbe32d28-6150-4a1f-a2b7-6b66bddc3816",
     "__expectedType__": "cc.EffectAsset"
   },
   "_techIdx": 0,
   "_defines": [
-    {
-      "USE_PHONG_DIFFUSE": true,
-      "USE_SPECULAR": true
-    }
+    {}
   ],
   "_states": [
     {
@@ -26,11 +23,6 @@
     }
   ],
   "_props": [
-    {
-      "kDiffuse": 0.87,
-      "kAmbient": 0.39,
-      "kGloss": 4.01,
-      "kSpecular": 1
-    }
+    {}
   ]
 }

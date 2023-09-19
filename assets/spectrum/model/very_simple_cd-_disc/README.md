@@ -1,0 +1,1 @@
+This model is downloaded from https://sketchfab.com/3d-models/very-simple-cd-disc-9749f5ba1221476993376a3cb8fee1a5
